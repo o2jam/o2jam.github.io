@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>links</title>
+  <style>
+    *{margin: 0; padding: 0;}
+    html{font-size: 16px;}
+    body{padding: 1rem; font-size: .875rem; color: #666;}
+
+    fieldset{padding: 0 1rem; border: 1px solid #eee; margin-bottom: 1rem;}
+    legend{}
+
+    ul{margin-top: 1rem;}
+    li{margin: 1rem; list-style: none;}
+
+    label{vertical-align: top;}
+    input[type=text]{width: 15rem; line-height: 1.5; border: 1px solid #ddd;}
+    textarea{width: 15rem; height: 5rem; border: 1px solid #ddd; line-height: 1.25;}
+    input[type=button]{width: 5rem; margin-left: 3rem; line-height: 1.25;}
+
+    dl{padding: .5rem 0; border-bottom: 1px solid #eee;}
+    dt{display: block;}
+    dd{display: block; font-size: .75rem; color: #999;}
+    time{font-size: .625rem; color: #ccc;}
+  </style>
+</head>
+<body>
+  <fieldset>
+    <legend>添加书签</legend>
+    <ul>
+        <li><label>链接：<input type="text" class="links__url"></label></li>
+        <li><label>标题：<input type="text" class="links__title"></label></li>
+        <li><label>描述：<textarea class="links__description" cols="30" rows="10"></textarea></li>
+        <li><input type="button" class="links__add" value="添加"><input type="button" class="links__clear" value="清空"></li>
+    </ul>
+  </fieldset>
+  <fieldset class="links__list">
+        <template class="links__template">
+          {{each linkList as link}}
+          <dl>
+            <dt>
+              <a href="{{link.url}}">{{link.title}}</a>
+            </dt>
+            <dd>{{link.description}}</dd>
+            <dd>
+              <time>{{link.createdAt | date}}</time>
+            </dd>
+          </dl>
+          {{/each}}
+        </template>
+  </fieldset>
+  <script src="https://aui.github.io/art-template/js/template-engines/template-web.js"></script>
+  <script>
+    template.defaults.imports.date = d => {
+      let date = new Date(d)
+      return date.toLocaleString()
+    }
+
+    let $ = selector => document.querySelector(selector)
+    let $container = $('.links__list')
+    let $template = $('.links__template')
+
+    let linkList = JSON.parse(localStorage.getItem('linkList') || '[]')
+
+    linkList.sort((a, b) => b.createdAt - a.createdAt)
+
+    let render = template.compile($template.innerHTML)
+
+    let update = () => {
+      $container.innerHTML= render({
+        linkList
+      })
+    }
+
+    update()
+
+    $('.links__add').addEventListener('click', event => {
+      let $url = $('.links__url')
+      let $title = $('.links__title')
+      let $description = $('.links__description')
+      linkList.unshift({
+        url: $url.value,
+        title: $title.value,
+        description: $description.value,
+        createdAt: +new Date()
+      })
+      localStorage.setItem('linkList', JSON.stringify(linkList))
+      update()
+    })
+
+    $('.links__clear').addEventListener('click', event => {
+      let $url = $('.links__url')
+      let $title = $('.links__title')
+      let $description = $('.links__description')
+      $url.value = ''
+      $title.value = ''
+      $description.value = ''
+    })
+  </script>
+</body>
+</html>
