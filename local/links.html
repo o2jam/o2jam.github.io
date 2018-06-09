@@ -91,7 +91,7 @@
       })
       if (linkList.length) {
         let $formJson = $('.form__json')
-        let blob = new Blob([JSON.stringify(linkList, null, 2)], {type : 'application/json'})
+        let blob = new Blob([JSON.stringify(linkList, null, 2)], {type: 'application/json'})
         $formJson.target = '_blank'
         $formJson.href = URL.createObjectURL(blob)
       }
@@ -99,11 +99,21 @@
 
     update()
 
+    let clearForm = () => {
+      $('.form__url').value = ''
+      $('.form__title').value = ''
+      $('.form__description').value = ''
+    }
+
     $('.form__add').addEventListener('click', event => {
       let url = $('.form__url').value.trim()
       let title = $('.form__title').value.trim()
       let description = $('.form__description').value.trim()
       if (!url || !title) return alert('链接与标题一定要填')
+
+      let existedLinkList = linkList.filter(link => link.url === url)
+      if (existedLinkList.length) return alert(`链接已存在，标题为【${existedLinkList[0].title}】`)
+
       linkList.unshift({
         url,
         title,
@@ -112,13 +122,11 @@
       })
       localStorage.setItem('linkList', JSON.stringify(linkList))
       update()
+
+      clearForm()
     })
 
-    $('.form__clear').addEventListener('click', event => {
-      $('.form__url').value = ''
-      $('.form__title').value = ''
-      $('.form__description').value = ''
-    })
+    $('.form__clear').addEventListener('click', clearForm)
 
     $('.form__json').addEventListener('click', event => {
       let linkList = localStorage.getItem('linkList')
