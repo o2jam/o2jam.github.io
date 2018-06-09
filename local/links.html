@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>links</title>
   <style>
@@ -21,7 +21,11 @@
     .form__description{width: 98%; height: 2rem; border: 1px solid #ddd; line-height: 1.25;}
     .form__description{height: 5rem;}
     .form__add,
-    .form__clear{float: left; margin-right: 1rem; padding: .5rem 1rem; background: rgba(0, 0, 0, .6); color: #fff;}
+    .form__clear,
+    .form__json{float: left; margin-right: 1rem; padding: .5rem 1rem; background: rgba(0, 0, 0, .6); color: #fff; text-decoration: none;}
+    .form__add:hover,
+    .form__clear:hover,
+    .form__json:hover{background: rgba(0, 0, 0, .8);}
 
     .links_null{margin: .5rem 0;}
     .links_item{padding: .5rem 0;}
@@ -38,7 +42,11 @@
         <li class="form__row"><label class="form_label">链接：<textarea class="form__url"></textarea></label></li>
         <li class="form__row"><label class="form_label">标题：<textarea class="form__title"></textarea></label></li>
         <li class="form__row"><label class="form_label">描述：<textarea class="form__description"></textarea></li>
-        <li class="form__row"><a href="javascript:;" class="form__add">添加</a><a href="javascript:;" class="form__clear">清空</a></li>
+        <li class="form__row">
+          <a href="javascript:;" class="form__add">添加</a>
+          <a href="javascript:;" class="form__clear">清空</a>
+          <a href="javascript:;" class="form__json">查看配置</a>
+        </li>
     </ul>
   </fieldset>
   <fieldset class="links">
@@ -81,6 +89,12 @@
       $container.innerHTML= render({
         linkList
       })
+      if (linkList.length) {
+        let $formJson = $('.form__json')
+        let blob = new Blob([JSON.stringify(linkList, null, 2)], {type : 'application/json'})
+        $formJson.target = '_blank'
+        $formJson.href = URL.createObjectURL(blob)
+      }
     }
 
     update()
@@ -104,6 +118,16 @@
       $('.form__url').value = ''
       $('.form__title').value = ''
       $('.form__description').value = ''
+    })
+
+    $('.form__json').addEventListener('click', event => {
+      let linkList = localStorage.getItem('linkList')
+      let blob = new Blob([JSON.stringify(linkList, null, 2)], {type : 'application/json'})
+      let url = URL.createObjectURL(blob)
+      let a = document.createElement('a')
+      a.href = url
+      a.target = '_blank'
+      a.dispatchEvent('click')
     })
   </script>
 </body>
