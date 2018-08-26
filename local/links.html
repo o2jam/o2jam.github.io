@@ -68,7 +68,7 @@
       {{/if}}
     </template>
   </fieldset>
-  <script src="./js/art.js"></script>
+  <script src="https://aui.github.io/art-template/js/template-engines/template-web.js"></script>
   <script>
     template.defaults.imports.date = d => {
       let date = new Date(d)
@@ -127,6 +127,16 @@
     })
 
     $('.form__clear').addEventListener('click', clearForm)
+
+    $('.form__json').addEventListener('click', event => {
+      let linkList = localStorage.getItem('linkList')
+      let blob = new Blob([JSON.stringify(linkList, null, 2)], {type : 'application/json'})
+      let url = URL.createObjectURL(blob)
+      let a = document.createElement('a')
+      a.href = url
+      a.target = '_blank'
+      a.dispatchEvent('click')
+    })
   </script>
 </body>
 </html>
