@@ -91,7 +91,7 @@
       })
       if (linkList.length) {
         let $formJson = $('.form__json')
-        let blob = new Blob([JSON.stringify(linkList, null, 2)], {type: 'application/json;charset=utf-8;'})
+        let blob = new Blob([JSON.stringify(linkList, null, 2)], {type: 'charset=utf-8;application/json;'})
         $formJson.target = '_blank'
         $formJson.href = URL.createObjectURL(blob)
       }
